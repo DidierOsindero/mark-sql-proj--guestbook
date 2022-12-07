@@ -37,17 +37,18 @@ app.get("/signatures", async (req, res) => {
 });
 
 app.get("/signatures/:id", async (req, res) => {
-  // :id indicates a "route parameter", available as req.params.id
-  //  see documentation: https://expressjs.com/en/guide/routing.html
   const id = parseInt(req.params.id); // params are always string type
 
-  const signature = null; //FIXME-TASK get the signature row from the db (match on id)
+  const text = `SELECT * FROM signatures WHERE id = $1`;
+  const values = [Number(req.params.id)];
+
+  const signature = await client.query(text, values); //FIXME-TASK get the signature row from the db (match on id)
 
   if (signature) {
     res.status(200).json({
       status: "success",
       data: {
-        signature,
+        signature: signature.rows,
       },
     });
   } else {
