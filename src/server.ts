@@ -124,7 +124,9 @@ app.put("/signatures/:id", async (req, res) => {
 app.delete("/signatures/:id", async (req, res) => {
   const id = parseInt(req.params.id); // params are string type
 
-  const queryResult: any = null; ////FIXME-TASK: delete the row with given id from the db
+  const text = "DELETE FROM signatures WHERE id = $1 RETURNING *";
+  const values = [id];
+  const queryResult = await client.query(text, values); ////FIXME-TASK: delete the row with given id from the db
   const didRemove = queryResult.rowCount === 1;
 
   if (didRemove) {
@@ -134,6 +136,7 @@ app.delete("/signatures/:id", async (req, res) => {
     //  res.status(204).send() to send with status 204 and no JSON body
     res.status(200).json({
       status: "success",
+      deletedRow: queryResult.rows[0],
     });
   } else {
     res.status(404).json({
