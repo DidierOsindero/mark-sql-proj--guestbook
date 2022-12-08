@@ -63,13 +63,16 @@ app.get("/signatures/:id", async (req, res) => {
 
 app.post("/signatures", async (req, res) => {
   const { name, message } = req.body;
+
   if (typeof name === "string") {
-    const createdSignature = null; //FIXME-TASK: insert the supplied signature object into the DB
+    const text = `INSERT INTO signatures (signature, message) VALUES ($1, $2) RETURNING *`;
+    const values = [`${name}`, `${message}`];
+    const createdSignature = await client.query(text, values); //FIXME-TASK: insert the supplied signature object into the DB
 
     res.status(201).json({
       status: "success",
       data: {
-        signature: createdSignature, //return the relevant data (including its db-generated id)
+        signature: createdSignature.rows, //return the relevant data (including its db-generated id)
       },
     });
   } else {
