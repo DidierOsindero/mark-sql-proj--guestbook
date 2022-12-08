@@ -44,7 +44,7 @@ app.get("/signatures/:id", async (req, res) => {
 
   const signature = await client.query(text, values); //FIXME-TASK get the signature row from the db (match on id)
 
-  if (signature) {
+  if (signature.rowCount < 0) {
     res.status(200).json({
       status: "success",
       data: {
